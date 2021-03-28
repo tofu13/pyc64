@@ -51,7 +51,24 @@ class Memory:
         )
 
     def get_chargen(self):
+
         return self.roms['chargen']
+
+    def loop(self, bus):
+        while True:
+            msg = bus.recv()
+            print("memory receive", msg)
+            if msg.startswith("R"):
+                address = int(msg[2:])
+                bus.send(f"R:{address}:{self[address]}")
+            elif msg.startswith("W"):
+                address, value = map(int, msg[2:].split(":"))
+                self[address] = value
+                bus.send(f"W:{address}:{value}")
+            elif msg == "QUIT":
+                break
+
+
 
 class BytearrayMemory(Memory, bytearray):
     pass

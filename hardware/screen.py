@@ -99,6 +99,10 @@ class Screen:
             self.display.blit(self.buffer, self.buffer_pos)
             pygame.display.update(self.buffer.get_rect())
 
+    def loop(self, bus):
+        while True:
+            time.sleep(1)
+
 if __name__ == '__main__':
     s = Screen()
     s.memory = bytearray(65536)

@@ -1,3 +1,5 @@
+import time
+
 from .constants import *
 import asyncio
 
@@ -102,6 +104,11 @@ class CPU:
                 elif event == 'NMI':
                     pass
         print(f"BRK encountered at ${self.PC:04X}")
+
+    def loop(self, bus):
+        while True:
+            time.sleep(1)
+
 
     def sys(self, address):
         """

@@ -27,10 +27,25 @@ class Machine:
         self.ciaA.memory = self.memory
         self.ciaA.init()
 
+        inventory = [self.memory, self.cpu, self.screen]#, keyboard]
+        hardware = {}
+
+        for instance in inventory:
+            _bus, _endpoint = Pipe()
+            hardware[instance.__class__.__name__] = {
+                "instance": instance,
+                "bus": _bus,
+                "endpoint": _endpoint,
+                "process": Process(target=instance.loop, args=(_bus,), name=instance.__class__.__name__)
+            }
+
+        for p in hardware.values():
+            p['process'].start()
+
     def run(self, address):
         loop = asyncio.get_event_loop()
         event_queue = asyncio.Queue()
-        ciaA_IRQ = loop.create_task(self.ciaA.loop(event_queue))
+        ciaA_IRQ = loop.create_task(self.ciaA.async_loop(event_queue))
 
         self.cpu.PC = address
         cpu_loop = loop.create_task(self.cpu.run(event_queue))

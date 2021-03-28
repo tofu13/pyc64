@@ -1,5 +1,5 @@
 from .constants import *
-
+import time
 from os import environ
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
@@ -49,12 +49,16 @@ class CIAA:
         #    elif event.type == pygame.KEYUP:
         #        self.memory[0xDC01] = 0xFF No key pressed
 
-    async def loop(self, queue):
+    async def async_loop(self, queue):
         delay = 1 / IRQ_RATE
         while True:
             await queue.put("IRQ")
             await asyncio.sleep(delay)
             # self.fake_keyboard()
+
+    def loop(self, bus):
+        while True:
+            time.sleep(1)
 
     def get_registers(self, address, value):
         if address == 0xDC01:
